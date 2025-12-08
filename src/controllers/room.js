@@ -12,7 +12,7 @@ export const getRoom = async (req, res, next) => {
 };
 export const getZoneByRoomId = async (req, res) => {
   const room_id = req.params.id;
-  console.log({ room_id });
+
   try {
     const data = await roomService.getZoneByRoomId(room_id);
     res.status(200).json({ data: data });
@@ -31,7 +31,7 @@ export const getRowByZone = async (req, res) => {
 };
 export const getSlotByZoneRow = async (req, res) => {
   const { zone, row_no, room } = req.params;
-  console.log("first");
+
   try {
     const data = await roomService.getSlotByZoneRow(room, zone, row_no);
     res.status(200).json({ data: data });

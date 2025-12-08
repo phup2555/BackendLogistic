@@ -58,9 +58,9 @@ export async function getRowByZone(zone) {
 }
 export async function getSlotByZoneRow(room, zone, row_no) {
   const pool = await connectDB();
-  console.log({ room });
-  console.log({ zone });
-  console.log({ row_no });
+  // console.log({ room });
+  // console.log({ zone });
+  // console.log({ row_no });
   try {
     const query = `
       SELECT l.slot_no, l.location_id
@@ -80,7 +80,7 @@ export async function getSlotByZoneRow(room, zone, row_no) {
       .input("zone", sql.NVarChar(10), zone)
       .input("row_no", sql.Int, row_no)
       .query(query);
-    console.log("rrrrrrrr", result.recordset);
+    // console.log("rrrrrrrr", result.recordset);
     return result.recordset;
   } catch (error) {
     console.log(error);

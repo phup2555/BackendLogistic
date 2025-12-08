@@ -12,26 +12,24 @@ export async function getProducts() {
 }
 
 export async function createProduct(data) {
-  try {
-    const pool = await connectDB();
-    const { pd_customer_name, pd_customer_No_box, barcode } = data;
+  const pool = await connectDB();
 
-    const query = `
-    INSERT INTO product (pd_customer_name, pd_customer_No_box, pd_incoming_date,pd_status,barcode,location_id)
-    OUTPUT INSERTED.*
-    VALUES (@name, @box, GETDATE(),@pdStatus,@barcode,62401)
-  `;
+  const { pd_customer_name, pd_customer_No_box, barcode, location_id } = data;
+  console.log({ data });
+  const result = await pool
+    .request()
+    .input("name", sql.NVarChar, pd_customer_name)
+    .input("box", sql.NVarChar, pd_customer_No_box)
+    .input("barcode", sql.NVarChar, barcode)
+    .input("location_id", sql.Int, location_id).query(`
+      INSERT INTO product
+      (pd_customer_name, pd_customer_No_box, pd_incoming_date, pd_status, barcode, location_id)
+      OUTPUT INSERTED.*
+      VALUES
+      (@name, @box, GETDATE(), 'in_storage', @barcode, @location_id)
+    `);
 
-    const request = pool.request();
-    request.input("name", pd_customer_name);
-    request.input("box", pd_customer_No_box);
-    request.input("barcode", barcode);
-    request.input("pdStatus", "in_storage");
-    const result = await request.query(query);
-    return result.recordset[0];
-  } catch (error) {
-    throw new AppError("Server error", 500, error);
-  }
+  return result.recordset[0];
 }
 
 export async function getProductsLocation() {
