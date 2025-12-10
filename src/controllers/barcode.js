@@ -5,8 +5,6 @@ export const getBarcodes = async (req, res) => {
   try {
     const { barcode } = req.params;
 
-    console.log("Generating barcode:", barcode);
-
     const png = await bwipjs.toBuffer({
       bcid: "code128",
       text: barcode,
