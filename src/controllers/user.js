@@ -14,11 +14,13 @@ export const Login = async (req, res) => {
     const user = await Service.findUserByUsername(username);
 
     if (!user) {
-      return res.status(401).json({ message: "ບໍ່ພົບຜູ້ໃຊ້ນີ້" });
+      return res.status(401).json({ message: "ບໍ່ພົບຜູ້ຊື່ໃຊ້ນີ້" });
     }
     const isPaswordCorrect = verifyPassword(password, user.password);
     if (!isPaswordCorrect) {
-      throw new AppError("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ", 401);
+      return res
+        .status(402)
+        .json({ message: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ" });
     }
 
     const token = generateToken({
