@@ -12,6 +12,7 @@ export async function getProducts() {
     throw new AppError("Server error", 500, error);
   }
 }
+
 export async function getLastBarcodeRun4(dateYmd) {
   const pool = await connectDB();
   const result = await pool.query(`

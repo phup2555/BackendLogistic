@@ -21,7 +21,6 @@ export const createProduct = async (req, res, next) => {
       });
     }
 
-    // ===== เวลา =====
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -31,14 +30,11 @@ export const createProduct = async (req, res, next) => {
 
     const dateYmd = `${year}${month}${day}`;
 
-    // ===== query running 4 ตัวหน้า =====
     const lastRun = await productService.getLastBarcodeRun4(dateYmd);
 
-    // ถ้าไม่เจอ = เริ่มใหม่
     const nextRun = lastRun + 1;
     const running = String(nextRun).padStart(4, "0");
 
-    // ===== barcode =====
     const barcode = `${running}${year}${month}${day}${hour}${minute}`;
 
     const product = await productService.createProduct({
