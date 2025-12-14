@@ -49,7 +49,7 @@ export async function createUser(data) {
     
   `;
     const encryptPassword = hashPassword(password);
-    console.log({ encryptPassword });
+    // console.log({ encryptPassword });
     const request = pool.request();
 
     request.input("username", username);

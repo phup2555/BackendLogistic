@@ -12,12 +12,18 @@ export const getProducts = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { pd_customer_name, pd_customer_No_box, location_id, Doc } = req.body;
+    const { pd_customer_name, pd_customer_No_box, location_id, Doc, Sbox } =
+      req.body;
 
     if (!pd_customer_name || !pd_customer_No_box || !location_id) {
       return res.status(400).json({
         message:
           "ກະລຸນາປ້ອນຂໍ້ມຸນໃຫ້ຄົບຖ້ວນ pd_customer_name pd_customer_No_box location_id",
+      });
+    }
+    if (!Sbox) {
+      return res.status(400).json({
+        message: "ຂໍ້ມູນໂຊນSboxບໍ່ຖືກຕ້ອງ",
       });
     }
 
@@ -43,6 +49,7 @@ export const createProduct = async (req, res, next) => {
       barcode,
       location_id,
       Doc,
+      Sbox,
     });
 
     res.status(201).json({

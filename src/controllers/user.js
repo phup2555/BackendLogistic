@@ -5,6 +5,7 @@ import { generateToken } from "../util/token.js";
 
 export const Login = async (req, res) => {
   const { username, password } = req.body;
+  // console.log({ username });
   try {
     if (!username || !password) {
       return res.status(400).json({
@@ -12,9 +13,9 @@ export const Login = async (req, res) => {
       });
     }
     const user = await Service.findUserByUsername(username);
-
+    // console.log({ user });
     if (!user) {
-      return res.status(401).json({ message: "ບໍ່ພົບຜູ້ຊື່ໃຊ້ນີ້" });
+      return res.status(400).json({ message: "ບໍ່ພົບຜູ້ຊື່ໃຊ້ນີ້" });
     }
     const isPaswordCorrect = verifyPassword(password, user.password);
     if (!isPaswordCorrect) {
@@ -38,7 +39,7 @@ export const Login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log({ error });
+    res.status(500).json({ message: "Server error Cannot login" });
     throw new AppError("Error during login", 500, error);
   }
 };
@@ -57,13 +58,14 @@ export const createUser = async (req, res) => {
     const checkUserUnique = await Service.checkUsernameUnique(
       req.body.username
     );
-    console.log({ checkUserUnique });
+    // console.log({ checkUserUnique });
     if (!checkUserUnique) {
       return res.status(400).json({ message: "ຊື່ຜູ້ໃຊ້ນີ້ມີແລ້ວ" });
     }
     const user = await Service.createUser(req.body);
     res.json({ data: user });
   } catch (error) {
+    res.status(500).json({ message: "Server error Cannot login" });
     throw new AppError("Error creating user", 500, error);
   }
 };

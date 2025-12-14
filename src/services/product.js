@@ -28,20 +28,28 @@ export async function createProduct(data) {
   try {
     const pool = await connectDB();
 
-    const { pd_customer_name, pd_customer_No_box, barcode, location_id, Doc } =
-      data;
+    const {
+      pd_customer_name,
+      pd_customer_No_box,
+      barcode,
+      location_id,
+      Doc,
+      Sbox,
+    } = data;
+    // console.log({ Sbox });
     const result = await pool
       .request()
       .input("name", sql.NVarChar, pd_customer_name)
       .input("box", sql.NVarChar, pd_customer_No_box)
       .input("barcode", sql.NVarChar, barcode)
       .input("pd_Document", sql.NVarChar, Doc)
-      .input("location_id", sql.Int, location_id).query(`
+      .input("location_id", sql.Int, location_id)
+      .input("Sbox", sql.VarChar, Sbox).query(`
       INSERT INTO product
-      (pd_customer_name, pd_customer_No_box, pd_incoming_date, pd_status, barcode, location_id,pd_Document)
+      (pd_customer_name, pd_customer_No_box, pd_incoming_date, pd_status, barcode, location_id,pd_Document,pd_sbox)
       OUTPUT INSERTED.*
       VALUES
-      (@name, @box, GETDATE(), 'in_storage', @barcode, @location_id,@pd_Document);
+      (@name, @box, GETDATE(), 'in_storage', @barcode, @location_id,@pd_Document,@Sbox);
     `);
 
     return result.recordset[0];
