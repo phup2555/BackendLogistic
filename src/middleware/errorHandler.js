@@ -1,4 +1,4 @@
-export function errorHandler(err, res) {
+export function errorHandler(err, res, req, next) {
   console.error(err);
   res.status(err?.statusCode).json({
     message: err.message || "Internal Server Error",
