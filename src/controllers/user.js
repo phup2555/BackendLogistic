@@ -23,7 +23,9 @@ export const Login = async (req, res) => {
         .status(402)
         .json({ message: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ" });
     }
-
+    if (user.role !== "LogisAdminnn" || user.role !== "UserLogistic") {
+      return res.status(403).json({ message: "ບໍ່ມີສິດເຂົ້າສູ່ລະບົບ" });
+    }
     const token = generateToken({
       username: user.username,
       role: user.role,
