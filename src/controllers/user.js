@@ -5,7 +5,7 @@ import { generateToken } from "../util/token.js";
 
 export const Login = async (req, res) => {
   const { username, password } = req.body;
-  // console.log({ username });
+
   try {
     if (!username || !password) {
       return res.status(400).json({
@@ -13,7 +13,7 @@ export const Login = async (req, res) => {
       });
     }
     const user = await Service.findUserByUsername(username);
-    // console.log({ user });
+
     if (!user) {
       return res.status(400).json({ message: "ບໍ່ພົບຜູ້ຊື່ໃຊ້ນີ້" });
     }
@@ -23,7 +23,8 @@ export const Login = async (req, res) => {
         .status(402)
         .json({ message: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ" });
     }
-    if (user.role !== "LogisAdminnn" || user.role !== "UserLogistic") {
+    if (user.role !== "LogisAdminnn" && user.role !== "UserLogistic") {
+      console.log({ user });
       return res.status(403).json({ message: "ບໍ່ມີສິດເຂົ້າສູ່ລະບົບ" });
     }
     const token = generateToken({
@@ -35,7 +36,7 @@ export const Login = async (req, res) => {
       message: "ເຂົ້າສູ່ລະບົບສຳເລັດ",
       token,
       result: {
-        username: user.username,
+        userId: user.user_id,
         role: user.role,
         phoneNumber: user.phoneNumber,
       },
