@@ -102,8 +102,16 @@ export async function editProduct(productId, data) {
       WHERE pd_id = @productId
       ;
     `);
-    return result.recordset;
+    return {
+      success: result.rowsAffected[0] > 0,
+      rowsAffected: result.rowsAffected[0],
+      message:
+        result.rowsAffected[0] > 0
+          ? "ແກ້ໄຂຂໍ້ມູນສຳເລັດ"
+          : "ແກ້ໄຂຂໍ້ມູນບໍ່ສຳເລັດ",
+    };
   } catch (error) {
+    console.log("error", error);
     throw new AppError("Server error function edit", 500);
   }
 }
