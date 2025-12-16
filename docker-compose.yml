@@ -3,6 +3,6 @@ version: "3.3"
 services:
   node-app:
     build: .
-    container_name: BackendLogistics
+    container_name: BackendLogistics3000
     network_mode: "host"
     restart: always
