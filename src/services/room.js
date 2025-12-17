@@ -87,3 +87,39 @@ export async function getSlotByZoneRow(room, zone, row_no) {
     throw new AppError("server error", 500, error);
   }
 }
+export const getAvailableOccupiedByZone = async (room_id, zone) => {
+  const pool = await connectDB();
+  console.log({ room_id });
+  console.log({ zone });
+  try {
+    const query = `
+     SELECT 
+  l.location_id,
+  l.zone,
+  l.row_no,
+  l.slot_no,
+  CASE 
+    WHEN p.location_id IS NULL THEN 'AVAILABLE'
+    ELSE 'OCCUPIED'
+  END AS status
+FROM locations l
+LEFT JOIN product p 
+  ON l.location_id = p.location_id
+  AND p.pd_status = 'in_storage'
+WHERE l.room_id = @room_id
+  AND l.zone = @zone
+ORDER BY l.row_no, l.slot_no;
+    `;
+
+    const result = await pool
+      .request()
+      .input("room_id", sql.Int, room_id)
+      .input("zone", sql.NVarChar(10), zone)
+      .query(query);
+
+    return result.recordset;
+  } catch (error) {
+    console.error("SQL ERROR:", error);
+    throw new AppError("Server error", 500, error);
+  }
+};

@@ -39,3 +39,16 @@ export const getSlotByZoneRow = async (req, res) => {
     throw new AppError("server error", error);
   }
 };
+export const getLocationMapByZone = async (req, res, next) => {
+  try {
+    const { zone, room_id } = req.params;
+
+    const data = await roomService.getAvailableOccupiedByZone(room_id, zone);
+    res.json({
+      success: true,
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
