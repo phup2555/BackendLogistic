@@ -137,3 +137,32 @@ export async function outProduct(productId, docOut) {
     throw new AppError("Server error function outProduct", 500);
   }
 }
+
+export async function getBeforePd_no_box(productId) {
+  try {
+    const pool = await connectDB();
+    const result = await pool
+      .request()
+      .input("id", productId)
+      .query(`SELECT pd_customer_No_box FROM product WHERE pd_id = @id`);
+
+    return result.recordset.length > 0 ? result.recordset[0] : null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new AppError("Server error: cannot get pd_no_box", 500);
+  }
+}
+export async function getBeforePd_name(productId) {
+  try {
+    const pool = await connectDB();
+    const result = await pool
+      .request()
+      .input("id", productId)
+      .query(`SELECT pd_customer_name FROM product WHERE pd_id = @id`);
+
+    return result.recordset.length > 0 ? result.recordset[0] : null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new AppError("Server error: cannot get pd_no_box", 500);
+  }
+}

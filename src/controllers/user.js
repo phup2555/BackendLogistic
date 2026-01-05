@@ -61,7 +61,6 @@ export const createUser = async (req, res) => {
     const checkUserUnique = await Service.checkUsernameUnique(
       req.body.username
     );
-    // console.log({ checkUserUnique });
     if (!checkUserUnique) {
       return res.status(400).json({ message: "ຊື່ຜູ້ໃຊ້ນີ້ມີແລ້ວ" });
     }

@@ -1,6 +1,6 @@
 import { AppError } from "../middleware/errorHandler.js";
 import * as productService from "../services/product.js";
-
+import * as logsService from "../services/logs.js";
 export const getProducts = async (req, res, next) => {
   try {
     const data = await productService.getProducts();
@@ -12,8 +12,14 @@ export const getProducts = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { pd_customer_name, pd_customer_No_box, location_id, Doc, Sbox } =
-      req.body;
+    const {
+      pd_customer_name,
+      pd_customer_No_box,
+      location_id,
+      Doc,
+      Sbox,
+      user_id,
+    } = req.body;
 
     if (!pd_customer_name || !pd_customer_No_box || !location_id) {
       return res.status(400).json({
@@ -51,6 +57,12 @@ export const createProduct = async (req, res, next) => {
       Doc,
       Sbox,
     });
+    await logsService.createLog({
+      action: "ADD",
+      user_id: user_id,
+      target_id: pd_customer_No_box,
+      note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${location_id}`,
+    });
 
     res.status(201).json({
       message: "ຝາກສຳເລັດ",
@@ -72,10 +84,18 @@ export const getProductsLocationIn = async (req, res, next) => {
 export const editProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const { pd_customer_name, pd_customer_No_box } = req.body;
+    const { pd_customer_name, pd_customer_No_box, user_id } = req.body;
     const data = await productService.editProduct(productId, {
       pd_customer_name,
       pd_customer_No_box,
+    });
+    const beforePd_No_box = await productService.getBeforePd_no_box(productId);
+    const beforePd_name = await productService.getBeforePd_name(productId);
+    await logsService.createLog({
+      action: "Edit product",
+      user_id: user_id,
+      target_id: pd_customer_No_box,
+      note: `productId:${productId};pd_name:${pd_customer_name};pd_no_box:${pd_customer_No_box} || oldPd_no:${beforePd_No_box?.pd_customer_No_box};oldPd_name:${beforePd_name?.pd_customer_name}`,
     });
     res.status(200).json({ data: data });
   } catch (error) {
