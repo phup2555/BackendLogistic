@@ -131,7 +131,7 @@ export async function outProduct(productId, docOut) {
       WHERE pd_id = @productId
       ;
     `);
-    return result.recordset;
+    return result.rowsAffected[0];
   } catch (error) {
     console.log({ error });
     throw new AppError("Server error function outProduct", 500);
@@ -164,5 +164,33 @@ export async function getBeforePd_name(productId) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new AppError("Server error: cannot get pd_no_box", 500);
+  }
+}
+export async function getLastProduct() {
+  try {
+    const pool = await connectDB();
+    const result = await pool.request().query(`
+        SELECT TOP 1 pd_id
+        FROM product
+        ORDER BY pd_id DESC
+      `);
+    return result.recordset[0]?.pd_id ?? null;
+  } catch (error) {
+    throw new AppError("Server error getLastProduct", 500, error);
+  }
+}
+
+export async function getLocationByPd_id(productId) {
+  try {
+    const pool = await connectDB();
+    const result = await pool
+      .request()
+      .input("pd_id", productId)
+      .query(
+        `SELECT location_id From product where pd_id=@pd_id and pd_status='in_storage'`
+      );
+    return result.recordset;
+  } catch (error) {
+    throw new AppError("Server Error cannot get LocationById", 500, error);
   }
 }

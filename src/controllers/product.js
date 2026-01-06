@@ -57,11 +57,15 @@ export const createProduct = async (req, res, next) => {
       Doc,
       Sbox,
     });
+    const getLastPd_id = await productService.getLastProduct();
     await logsService.createLog({
       action: "ADD",
       user_id: user_id,
-      target_id: pd_customer_No_box,
-      note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${location_id}`,
+      path: req.originalUrl,
+      method: req?.method,
+      pd_id: getLastPd_id,
+      Pd_No_target_id: pd_customer_No_box,
+      note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${location_id},ຂາເຂົ້າ: ${Doc}`,
     });
 
     res.status(201).json({
@@ -85,18 +89,34 @@ export const editProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
     const { pd_customer_name, pd_customer_No_box, user_id } = req.body;
+    const beforePd_No_box = await productService.getBeforePd_no_box(productId);
+    const beforePd_name = await productService.getBeforePd_name(productId);
+    if (!productId) {
+      throw new AppError("ບໍ່ສາມາດແກ້ໄຂໄດ້ເນື່ອງຈາກບໍ່ມີProductId", 400);
+    }
+    await logsService.createLog({
+      action: "Edit product",
+      user_id,
+      path: req.originalUrl,
+      Pd_No_target_id: pd_customer_No_box,
+      method: req?.method,
+      pd_id: productId,
+      note: `
+*NEW
++Pd Name   : ${pd_customer_name}
++Pd No Box : ${pd_customer_No_box}
+
+*OLD
++Pd Name   : ${beforePd_name?.pd_customer_name ?? "-"}
++Pd No Box : ${beforePd_No_box?.pd_customer_No_box ?? "-"}
+`.trim(),
+    });
+
     const data = await productService.editProduct(productId, {
       pd_customer_name,
       pd_customer_No_box,
     });
-    const beforePd_No_box = await productService.getBeforePd_no_box(productId);
-    const beforePd_name = await productService.getBeforePd_name(productId);
-    await logsService.createLog({
-      action: "Edit product",
-      user_id: user_id,
-      target_id: pd_customer_No_box,
-      note: `productId:${productId};pd_name:${pd_customer_name};pd_no_box:${pd_customer_No_box} || oldPd_no:${beforePd_No_box?.pd_customer_No_box};oldPd_name:${beforePd_name?.pd_customer_name}`,
-    });
+
     res.status(200).json({ data: data });
   } catch (error) {
     console.log("err", error);
@@ -106,9 +126,24 @@ export const editProduct = async (req, res, next) => {
 export const outProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const { docOut } = req.body;
+    const { docOut, user_id, pd_customer_No_box, pd_customer_name } = req.body;
+    const location_id = await productService.getLocationByPd_id(productId);
     const datas = await productService.outProduct(productId, docOut);
-    res.status(200).json({ data: datas });
+    await logsService.createLog({
+      action: "Out Stock",
+      user_id: user_id,
+      path: req.originalUrl,
+      method: req?.method,
+      pd_id: productId,
+      Pd_No_target_id: pd_customer_No_box,
+      note: `
+ລະຫັດສິນຄ້າ : ${pd_customer_No_box}
+ຊື່ສິນຄ້າ   : ${pd_customer_name}
+ສະຖານທີ່     : ${location_id[0]?.location_id}
+ເອກະສານຂາອອກ : ${docOut}
+`.trim(),
+    });
+    res.json(datas);
   } catch (error) {
     console.log("err", error);
     throw new AppError("Server error outProduct Contoller", 500, error);
