@@ -6,13 +6,15 @@ import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
-// Connect DB
 const pool = await connectDB();
 
-// CORS config ปลอดภัย
 app.use(
   cors({
-    origin: ["https://lgstorageservice.com", "http://localhost:5173"],
+    origin: [
+      "https://lgstorageservice.com",
+      "https://www.lgstorageservice.com",
+      "http://localhost:5173",
+    ],
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
