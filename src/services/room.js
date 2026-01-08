@@ -89,8 +89,7 @@ export async function getSlotByZoneRow(room, zone, row_no) {
 }
 export const getAvailableOccupiedByZone = async (room_id, zone) => {
   const pool = await connectDB();
-  console.log({ room_id });
-  console.log({ zone });
+
   try {
     const query = `
      SELECT 

@@ -68,7 +68,7 @@ export const createProduct = async (req, res, next) => {
       note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${location_id},ຂາເຂົ້າ: ${Doc}`,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       message: "ຝາກສຳເລັດ",
       barcode,
     });
@@ -143,7 +143,7 @@ export const outProduct = async (req, res, next) => {
 ເອກະສານຂາອອກ : ${docOut}
 `.trim(),
     });
-    res.json(datas);
+    res.status(200).json(datas);
   } catch (error) {
     console.log("err", error);
     throw new AppError("Server error outProduct Contoller", 500, error);
