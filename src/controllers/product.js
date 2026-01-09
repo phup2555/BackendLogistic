@@ -65,7 +65,7 @@ export const createProduct = async (req, res, next) => {
       method: req?.method,
       pd_id: getLastPd_id,
       Pd_No_target_id: pd_customer_No_box,
-      note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${location_id},ຂາເຂົ້າ: ${Doc}`,
+      note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${Sbox}/${location_id},ຂາເຂົ້າ: ${Doc}`,
     });
 
     res.status(200).json({
@@ -126,7 +126,8 @@ export const editProduct = async (req, res, next) => {
 export const outProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const { docOut, user_id, pd_customer_No_box, pd_customer_name } = req.body;
+    const { docOut, user_id, pd_customer_No_box, pd_customer_name, sbox } =
+      req.body;
     const location_id = await productService.getLocationByPd_id(productId);
     const datas = await productService.outProduct(productId, docOut);
     await logsService.createLog({
@@ -139,8 +140,9 @@ export const outProduct = async (req, res, next) => {
       note: `
 ລະຫັດສິນຄ້າ : ${pd_customer_No_box}
 ຊື່ສິນຄ້າ   : ${pd_customer_name}
-ສະຖານທີ່     : ${location_id[0]?.location_id}
+ສະຖານທີ່     :${sbox}
 ເອກະສານຂາອອກ : ${docOut}
+Lo_id: ${location_id[0]?.location_id}
 `.trim(),
     });
     res.status(200).json(datas);

@@ -30,13 +30,6 @@ app.use((req, res, next) => {
     res.send(body);
 
     if (req.method !== "GET") {
-      console.log("method", req.method);
-      console.log("req.headers", req.headers);
-      console.log("req.originalUrl", req.originalUrl);
-      console.log("res.statusCode", res.statusCode);
-      console.log("req.body", req.body);
-      console.log("req.params", req.params);
-      console.log("response body", body);
       try {
         const pool = await connectDB();
         await pool
