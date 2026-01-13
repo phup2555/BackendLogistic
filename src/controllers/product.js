@@ -1,6 +1,7 @@
 import { AppError } from "../middleware/errorHandler.js";
 import * as productService from "../services/product.js";
 import * as logsService from "../services/logs.js";
+import { io } from "../app.js";
 export const getProducts = async (req, res, next) => {
   try {
     const data = await productService.getProducts();
@@ -68,6 +69,17 @@ export const createProduct = async (req, res, next) => {
       note: `ລະຫັດສິນຄ້າ: ${pd_customer_No_box} ,ທີ່: ${Sbox}/${location_id},ຂາເຂົ້າ: ${Doc}`,
     });
 
+    io.emit("product_added", {
+      pd_id: getLastPd_id,
+      pd_customer_name,
+      pd_customer_No_box,
+      barcode,
+      location_id,
+      Sbox,
+      Doc,
+      created_at: new Date(),
+    });
+    console.log("first");
     res.status(200).json({
       message: "ຝາກສຳເລັດ",
       barcode,
